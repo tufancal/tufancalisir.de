@@ -66,7 +66,7 @@ Simple static pages fetch their content from Storyblok:
 ```astro
 // src/pages/index.astro
 ---
-import Layout from "../layouts/Layout.astro";
+import Layout from "@/src/layouts/Layout.astro";
 import StoryblokComponent from "@storyblok/astro/StoryblokComponent.astro";
 import { useStoryblokApi } from "@storyblok/astro";
 
