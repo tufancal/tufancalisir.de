@@ -3,6 +3,7 @@ import Layout from "../layouts/Layout.astro";
 import StoryblokComponent from "@storyblok/astro/StoryblokComponent.astro";
 import { useStoryblokApi } from "@storyblok/astro";
 import { extractSeoData } from "@/src/utils/storyblok";
+import { createPersonSchema, createWebsiteSchema } from "@/src/utils/jsonld";
 
 const storyblokApi = useStoryblokApi();
 const { data } = await storyblokApi.get("cdn/stories/home", {
@@ -11,8 +12,34 @@ const { data } = await storyblokApi.get("cdn/stories/home", {
 
 const content = data.story.content;
 const seo = extractSeoData(content);
+
+// Fetch global SEO data for author information
+const { data: seoData } = await storyblokApi.get("cdn/stories/global/seo", {
+  version: import.meta.env.DEV ? "draft" : "published",
+});
+const globalSeo = seoData.story.content;
+
+const baseUrl = Astro.url.origin;
+
+// Create JSON-LD schemas for homepage
+const jsonld = [
+  createPersonSchema({
+    name: globalSeo.siteName || "Tufan Calisir",
+    url: baseUrl,
+    jobTitle: "Webentwickler",
+    description: seo.description,
+    image: globalSeo.ogImage?.filename,
+  }),
+  createWebsiteSchema({
+    name: globalSeo.siteName || "Tufan Calisir",
+    url: baseUrl,
+    description: seo.description,
+    publisherName: globalSeo.siteName || "Tufan Calisir",
+    publisherUrl: baseUrl,
+  }),
+];
 ---
 
-<Layout seoPage={seo}>
+<Layout seoPage={seo} jsonld={jsonld}>
   <StoryblokComponent blok={content} />
 </Layout>

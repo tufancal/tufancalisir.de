@@ -3,6 +3,8 @@ import Layout from "../../layouts/Layout.astro";
 import StoryblokComponent from "@storyblok/astro/StoryblokComponent.astro";
 import { useStoryblokApi } from "@storyblok/astro";
 import { extractSeoData } from "@/src/utils/storyblok";
+import { createBlogPostSchema } from "@/src/utils/jsonld";
+import Breadcrumb from "@/src/components/molecules/Breadcrumb.astro";
 
 export async function getStaticPaths() {
   const sbApi = useStoryblokApi();
@@ -26,7 +28,7 @@ export async function getStaticPaths() {
 const sbApi = useStoryblokApi();
 const { slug } = Astro.params;
 
-let content, publishedAt;
+let content, publishedAt, firstPublishedAt;
 
 try {
   const { data } = await sbApi.get(`cdn/stories/blog/${slug}`, {
@@ -35,13 +37,44 @@ try {
 
   content = data.story.content;
   publishedAt = data.story.published_at;
+  firstPublishedAt = data.story.first_published_at;
 } catch (error) {
   console.error(`Error fetching blog post "${slug}":`, error);
 }
 
 const seo = extractSeoData(content);
+
+// Fetch global SEO data for author information
+const { data: seoData } = await sbApi.get("cdn/stories/global/seo", {
+  version: import.meta.env.DEV ? "draft" : "published",
+});
+const globalSeo = seoData.story.content;
+
+const baseUrl = Astro.url.origin;
+const currentUrl = `${baseUrl}${Astro.url.pathname}`;
+
+// Create BlogPosting JSON-LD schema
+const jsonld = createBlogPostSchema({
+  headline: seo.title,
+  description: seo.description,
+  authorName: globalSeo.siteName || "Tufan Calisir",
+  authorUrl: baseUrl,
+  datePublished: firstPublishedAt || publishedAt,
+  dateModified: publishedAt,
+  url: currentUrl,
+  image: content.ogImage?.filename || globalSeo.ogImage?.filename,
+  publisherName: globalSeo.siteName || "Tufan Calisir",
+  publisherUrl: baseUrl,
+});
 ---
 
-<Layout seoPage={seo}>
+<Layout seoPage={seo} jsonld={jsonld}>
+  <Breadcrumb
+    items={[
+      { name: "Home", url: "/" },
+      { name: "Blog", url: "/blog" },
+      { name: seo.title },
+    ]}
+  />
   <StoryblokComponent blok={content} publishedAt={publishedAt} />
 </Layout>
