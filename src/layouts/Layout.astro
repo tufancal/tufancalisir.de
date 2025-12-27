@@ -11,6 +11,7 @@ interface Props {
     description: string;
   };
   jsonld?: JSONLDSchema;
+  noindex?: boolean;
 }
 
 const storyblokApi = useStoryblokApi();
@@ -41,7 +42,7 @@ try {
 }
 
 const canonicalUrl = Astro.url.origin + Astro.url.pathname;
-const { seoPage, jsonld } = Astro.props;
+const { seoPage, jsonld, noindex } = Astro.props;
 ---
 
 <!doctype html>
@@ -56,6 +57,7 @@ const { seoPage, jsonld } = Astro.props;
     <meta name="generator" content={Astro.generator} />
     <title>{seoPage.title} | {seo.siteName}</title>
     <meta name="description" content={seoPage.description} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
     <link rel="canonical" href={canonicalUrl} />
     <link rel="sitemap" href="/sitemap-index.xml" />
     <meta property="og:title" content={`${seoPage.title} | ${seo.siteName}`} />

@@ -55,9 +55,13 @@ try {
 
 // Generate breadcrumb title from SEO title (remove site name suffix)
 const breadcrumbTitle = seo.title.split(" | ")[0];
+
+// Pages that should not be indexed by search engines
+const noindexPages = ["datenschutz", "impressum"];
+const shouldNoindex = noindexPages.includes(slug);
 ---
 
-<Layout seoPage={seo}>
+<Layout seoPage={seo} noindex={shouldNoindex}>
   <Breadcrumb items={[{ name: "Home", url: "/" }, { name: breadcrumbTitle }]} />
   <StoryblokComponent blok={content} />
 </Layout>
