@@ -1,0 +1,51 @@
+---
+import Layout from "@/src/layouts/Layout.astro";
+import StoryblokComponent from "@storyblok/astro/StoryblokComponent.astro";
+import { useStoryblokApi } from "@storyblok/astro";
+import { extractSeoData } from "@/src/utils/storyblok";
+import Breadcrumb from "@/src/components/molecules/Breadcrumb.astro";
+
+export async function getStaticPaths() {
+  const sbApi = useStoryblokApi();
+
+  // Fetch all stories except blog posts and global content
+  const { data } = await sbApi.get("cdn/stories", {
+    version: import.meta.env.DEV ? "draft" : "published",
+    excluding_slugs: "home,blog/*,global/*",
+  });
+
+  const stories = Object.values(data.stories);
+
+  return stories.map((story: any) => {
+    return {
+      params: { slug: story.slug },
+    };
+  });
+}
+
+const sbApi = useStoryblokApi();
+const { slug } = Astro.params;
+
+let content, seo;
+
+try {
+  const { data } = await sbApi.get(`cdn/stories/${slug}`, {
+    version: import.meta.env.DEV ? "draft" : "published",
+  });
+
+  content = data.story.content;
+  seo = extractSeoData(content);
+} catch (error) {
+  return Astro.redirect("/404");
+}
+
+const breadcrumbTitle = seo.title.split(" | ")[0];
+
+const noindexPages = ["datenschutz", "impressum"];
+const shouldNoindex = noindexPages.includes(slug);
+---
+
+<Layout seoPage={seo} noindex={shouldNoindex}>
+  <Breadcrumb items={[{ name: "Home", url: "/" }, { name: breadcrumbTitle }]} />
+  <StoryblokComponent blok={content} />
+</Layout>

@@ -2,12 +2,16 @@
 import "../styles.css";
 import { useStoryblokApi } from "@storyblok/astro";
 import StoryblokComponent from "@storyblok/astro/StoryblokComponent.astro";
+import type { JSONLDSchema } from "@/src/utils/jsonld";
+import { schemaToJson } from "@/src/utils/jsonld";
 
 interface Props {
   seoPage: {
     title: string;
     description: string;
   };
+  jsonld?: JSONLDSchema;
+  noindex?: boolean;
 }
 
 const storyblokApi = useStoryblokApi();
@@ -38,7 +42,7 @@ try {
 }
 
 const canonicalUrl = Astro.url.origin + Astro.url.pathname;
-const { seoPage } = Astro.props;
+const { seoPage, jsonld, noindex } = Astro.props;
 ---
 
 <!doctype html>
@@ -53,6 +57,7 @@ const { seoPage } = Astro.props;
     <meta name="generator" content={Astro.generator} />
     <title>{seoPage.title} | {seo.siteName}</title>
     <meta name="description" content={seoPage.description} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
     <link rel="canonical" href={canonicalUrl} />
     <link rel="sitemap" href="/sitemap-index.xml" />
     <meta property="og:title" content={`${seoPage.title} | ${seo.siteName}`} />
@@ -106,6 +111,7 @@ const { seoPage } = Astro.props;
       type="font/woff2"
       crossorigin
     />
+    {jsonld && <script type="application/ld+json" is:inline set:html={schemaToJson(jsonld)} />}
   </head>
   <body class="bg-gallery">
     <StoryblokComponent blok={header} />

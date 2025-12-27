@@ -4,6 +4,7 @@ import { useStoryblokApi } from "@storyblok/astro";
 import { getBlogCategories, extractSeoData } from "@/src/utils/storyblok";
 import BlogPostGridCategory from "@/src/components/organisms/BlogPostGridCategory.astro";
 import StoryblokComponent from "@storyblok/astro/StoryblokComponent.astro";
+import Breadcrumb from "@/src/components/molecules/Breadcrumb.astro";
 
 export async function getStaticPaths() {
   const categories = await getBlogCategories(
@@ -39,9 +40,21 @@ try {
   };
   content = null;
 }
+
+const categories = await getBlogCategories(
+  import.meta.env.DEV ? "draft" : "published",
+);
+const currentCategory = categories.get(kategorie);
 ---
 
 <Layout seoPage={seo}>
+  <Breadcrumb
+    items={[
+      { name: "Home", url: "/" },
+      { name: "Blog", url: "/blog" },
+      { name: currentCategory?.name || kategorie },
+    ]}
+  />
   {
     content?.body &&
       content.body.map((blok: any) => {

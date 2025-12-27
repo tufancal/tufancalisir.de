@@ -3,6 +3,7 @@ import Layout from "@/src/layouts/Layout.astro";
 import { extractSeoData } from "@/src/utils/storyblok";
 import { useStoryblokApi } from "@storyblok/astro";
 import StoryblokComponent from "@storyblok/astro/StoryblokComponent.astro";
+import Breadcrumb from "@/src/components/molecules/Breadcrumb.astro";
 
 const storyblokApi = useStoryblokApi();
 const { data } = await storyblokApi.get("cdn/stories/blog", {
@@ -14,5 +15,11 @@ const seo = extractSeoData(content);
 ---
 
 <Layout seoPage={seo}>
+  <Breadcrumb
+    items={[
+      { name: "Home", url: "/" },
+      { name: "Blog" },
+    ]}
+  />
   <StoryblokComponent blok={content} />
 </Layout>

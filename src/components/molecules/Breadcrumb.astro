@@ -1,0 +1,48 @@
+---
+import { createBreadcrumbSchema, type JSONLDSchema } from "@/src/utils/jsonld";
+
+export interface BreadcrumbItem {
+  name: string;
+  url?: string;
+}
+
+interface Props {
+  items: BreadcrumbItem[];
+}
+
+const { items } = Astro.props;
+
+// Generate JSON-LD schema for SEO
+const jsonldSchema: JSONLDSchema = createBreadcrumbSchema(items);
+
+// Make the schema available to parent components via a slot prop pattern
+// We'll return it as a data attribute that the Layout can pick up
+---
+
+<nav aria-label="Breadcrumb" class="container mx-auto mb-8 max-w-3xl px-4">
+  <div class="breadcrumbs text-sm">
+    <ul>
+      {
+        items.map((item, index) => {
+          const isLast = index === items.length - 1;
+          return (
+            <li>
+              {item.url && !isLast ? (
+                <a href={item.url} class="link link-hover">
+                  {item.name}
+                </a>
+              ) : (
+                <span class={isLast ? "text-base-content" : ""}>
+                  {item.name}
+                </span>
+              )}
+            </li>
+          );
+        })
+      }
+    </ul>
+  </div>
+</nav>
+
+<!-- Expose JSON-LD schema via a script that can be picked up by Layout -->
+<script type="application/ld+json" is:inline set:html={JSON.stringify(jsonldSchema)} />
