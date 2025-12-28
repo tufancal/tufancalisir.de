@@ -1,3 +1,4 @@
+import cloudflare from "@astrojs/cloudflare";
 import react from "@astrojs/react";
 import sitemap from "@astrojs/sitemap";
 import { storyblok } from "@storyblok/astro";
@@ -13,13 +14,17 @@ const env = loadEnv("", process.cwd(), "STORYBLOK");
 // Disable for production builds
 const enableBridge = process.env.ENABLE_STORYBLOK_BRIDGE === "true";
 
+// Use server mode for staging (enables SSR for Bridge), static for production
+const outputMode = enableBridge ? "server" : "static";
+
 export default defineConfig({
   site: "https://tufancalisir.de",
+  output: outputMode,
+  adapter: outputMode !== "static" ? cloudflare() : undefined,
   integrations: [
     react(),
     sitemap(),
     storyblok({
-      output: "static",
       accessToken: env.STORYBLOK_TOKEN,
       components: {
         link: "components/atoms/Link",
