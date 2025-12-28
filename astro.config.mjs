@@ -9,6 +9,8 @@ import mkcert from "vite-plugin-mkcert";
 
 const env = loadEnv("", process.cwd(), "STORYBLOK");
 
+const isProduction = process.env.NODE_ENV === "production";
+
 export default defineConfig({
   site: "https://tufancalisir.de",
   integrations: [
@@ -51,11 +53,11 @@ export default defineConfig({
       apiOptions: {
         region: "eu",
       },
-      bridge: process.env.NODE_ENV !== "production",
+      bridge: !isProduction,
     }),
   ],
   vite: {
-    plugins: [tailwindcss(), mkcert()],
+    plugins: [tailwindcss(), ...(!isProduction ? [mkcert()] : [])],
     resolve: {
       alias: {
         "@": path.resolve("./"),
