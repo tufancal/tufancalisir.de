@@ -5,11 +5,14 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
+    "build:production": "astro build --mode production",
+    "build:staging": "astro build --mode development",
     "preview": "astro preview",
     "astro": "astro",
     "types": "npx storyblok components pull --space 285719928053161 && npx storyblok types generate -s 285719928053161"
   },
   "dependencies": {
+    "@astrojs/cloudflare": "^12.6.12",
     "@astrojs/react": "^4.4.2",
     "@astrojs/sitemap": "^3.6.0",
     "@emailjs/browser": "^4.4.1",

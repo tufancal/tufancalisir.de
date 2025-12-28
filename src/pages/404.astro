@@ -2,13 +2,14 @@
 import Layout from "@/src/layouts/Layout.astro";
 import { useStoryblokApi } from "@storyblok/astro";
 import { resolveStoryblokUrl } from "@/src/utils/storyblok";
+import { getStoryblokVersion } from "@/src/utils/env";
 
 const storyblokApi = useStoryblokApi();
 
 const { data: headerData } = await storyblokApi.get(
   "cdn/stories/global/header",
   {
-    version: import.meta.env.DEV ? "draft" : "published",
+    version: getStoryblokVersion(),
   },
 );
 

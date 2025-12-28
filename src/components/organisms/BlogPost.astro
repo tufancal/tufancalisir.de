@@ -13,6 +13,7 @@ import { getBlogCategory } from "@/src/utils/storyblok";
 import { getBlogGlobalData } from "@/src/utils/storyblok";
 import { richTextResolvers } from "@/src/utils/richTextResolvers";
 import { processRichTextWithCodeHighlighting } from "@/src/utils/highlightCodeBlocks";
+import { getStoryblokVersion } from "@/src/utils/env";
 interface Props {
   blok: BlogPost;
   publishedAt: string;
@@ -20,9 +21,7 @@ interface Props {
 
 const { blok, publishedAt } = Astro.props;
 
-const blogGlobalData = await getBlogGlobalData(
-  import.meta.env.DEV ? "draft" : "published",
-);
+const blogGlobalData = await getBlogGlobalData(getStoryblokVersion());
 // Extract headline anchor IDs for table of contents
 const headlineAnchorIds =
   blok.copy.content
@@ -47,7 +46,7 @@ const image = generateResponsiveImageData(blok.image.filename as string, {
 
 const categories = await Promise.all(
   blok.category?.map((category: string) =>
-    getBlogCategory(category, import.meta.env.DEV ? "draft" : "published"),
+    getBlogCategory(category, getStoryblokVersion()),
   ),
 );
 

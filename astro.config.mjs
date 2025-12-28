@@ -1,3 +1,4 @@
+import cloudflare from "@astrojs/cloudflare";
 import react from "@astrojs/react";
 import sitemap from "@astrojs/sitemap";
 import { storyblok } from "@storyblok/astro";
@@ -8,16 +9,17 @@ import { loadEnv } from "vite";
 import mkcert from "vite-plugin-mkcert";
 
 const env = loadEnv("", process.cwd(), "STORYBLOK");
-
-const isProduction = import.meta.env.PROD;
+const enableBridge = process.env.ENABLE_STORYBLOK_BRIDGE === "true";
+const outputMode = enableBridge ? "server" : "static";
 
 export default defineConfig({
   site: "https://tufancalisir.de",
+  output: outputMode,
+  adapter: outputMode !== "static" ? cloudflare() : undefined,
   integrations: [
     react(),
     sitemap(),
     storyblok({
-      output: "static",
       accessToken: env.STORYBLOK_TOKEN,
       components: {
         link: "components/atoms/Link",
@@ -53,11 +55,11 @@ export default defineConfig({
       apiOptions: {
         region: "eu",
       },
-      bridge: !isProduction,
+      bridge: enableBridge,
     }),
   ],
   vite: {
-    plugins: [tailwindcss(), ...(!isProduction ? [mkcert()] : [])],
+    plugins: [tailwindcss(), ...(enableBridge ? [mkcert()] : [])],
     resolve: {
       alias: {
         "@": path.resolve("./"),

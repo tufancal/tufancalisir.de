@@ -1,5 +1,6 @@
 ---
 import { renderRichText, type StoryblokRichTextNode } from "@storyblok/astro";
+import { getStoryblokVersion } from "@/src/utils/env";
 import { useStoryblokApi } from "@storyblok/astro";
 import { formatDate } from "@/src/utils/date";
 import { getBlogCategories } from "@/src/utils/storyblok";
@@ -16,15 +17,13 @@ const storyblokApi = useStoryblokApi();
 
 // Fetch all blog posts
 const { data } = await storyblokApi.get("cdn/stories", {
-  version: import.meta.env.DEV ? "draft" : "published",
+  version: getStoryblokVersion(),
   starts_with: "blog",
   content_type: "blogPost",
 });
 
 // Fetch all categories for the filter
-const categoriesMap = await getBlogCategories(
-  import.meta.env.DEV ? "draft" : "published",
-);
+const categoriesMap = await getBlogCategories(getStoryblokVersion());
 const categories = Array.from(categoriesMap.values());
 
 // Transform stories into card data

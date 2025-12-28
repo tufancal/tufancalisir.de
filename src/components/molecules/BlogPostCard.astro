@@ -4,10 +4,9 @@ import { Image } from "astro:assets";
 import { generateResponsiveImageData } from "@/src/utils/optimizeImage";
 import { getBlogCategory } from "@/src/utils/storyblok";
 import { getBlogGlobalData } from "@/src/utils/storyblok";
+import { getStoryblokVersion } from "@/src/utils/env";
 
-const blogGlobalData = await getBlogGlobalData(
-  import.meta.env.DEV ? "draft" : "published",
-);
+const blogGlobalData = await getBlogGlobalData(getStoryblokVersion());
 
 interface Props {
   headline: string;
@@ -35,7 +34,7 @@ const imageData = generateResponsiveImageData(image.src, {
 
 const categories = await Promise.all(
   category?.map((category: string) =>
-    getBlogCategory(category, import.meta.env.DEV ? "draft" : "published"),
+    getBlogCategory(category, getStoryblokVersion()),
   ),
 );
 ---

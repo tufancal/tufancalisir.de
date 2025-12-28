@@ -1,5 +1,6 @@
 ---
 import { getBlogGlobalData } from "@/src/utils/storyblok";
+import { getStoryblokVersion } from "@/src/utils/env";
 
 interface Category {
   value: string;
@@ -12,9 +13,7 @@ interface Props {
   categories: Category[];
 }
 
-const blogGlobalData = await getBlogGlobalData(
-  import.meta.env.DEV ? "draft" : "published",
-);
+const blogGlobalData = await getBlogGlobalData(getStoryblokVersion());
 
 const { categories } = Astro.props;
 ---

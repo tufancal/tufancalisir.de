@@ -1,7 +1,10 @@
 ---
 import { storyblokEditable, type SbBlokData } from "@storyblok/astro";
+import { getStoryblokVersion } from "@/src/utils/env";
 import StoryblokComponent from "@storyblok/astro/StoryblokComponent.astro";
+import { getStoryblokVersion } from "@/src/utils/env";
 import { useStoryblokApi } from "@storyblok/astro";
+import { getStoryblokVersion } from "@/src/utils/env";
 import { resolveStoryblokUrl } from "@/src/utils/storyblok";
 import type { Footer } from "@/.storyblok/types/285719928053161/storyblok-components";
 
@@ -15,10 +18,10 @@ const { blok } = Astro.props;
 
 const [socialMediaData, headerData] = await Promise.all([
   storyblokApi.get("cdn/stories/global/social-media", {
-    version: import.meta.env.DEV ? "draft" : "published",
+    version: getStoryblokVersion(),
   }),
   storyblokApi.get("cdn/stories/global/header", {
-    version: import.meta.env.DEV ? "draft" : "published",
+    version: getStoryblokVersion(),
   }),
 ]);
 

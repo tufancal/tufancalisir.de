@@ -5,11 +5,10 @@ import { getBlogCategories, extractSeoData } from "@/src/utils/storyblok";
 import BlogPostGridCategory from "@/src/components/organisms/BlogPostGridCategory.astro";
 import StoryblokComponent from "@storyblok/astro/StoryblokComponent.astro";
 import Breadcrumb from "@/src/components/molecules/Breadcrumb.astro";
+import { getStoryblokVersion } from "@/src/utils/env";
 
 export async function getStaticPaths() {
-  const categories = await getBlogCategories(
-    import.meta.env.DEV ? "draft" : "published",
-  );
+  const categories = await getBlogCategories(getStoryblokVersion());
 
   return Array.from(categories.values()).map((category) => {
     return { params: { kategorie: category.value } };
@@ -23,15 +22,13 @@ const { kategorie } = Astro.params;
 let content, seo;
 try {
   const { data } = await sbApi.get(`cdn/stories/blog/kategorie/${kategorie}`, {
-    version: import.meta.env.DEV ? "draft" : "published",
+    version: getStoryblokVersion(),
   });
   content = data.story.content;
   seo = extractSeoData(content);
 } catch (error) {
   // If no story exists, use default SEO
-  const categories = await getBlogCategories(
-    import.meta.env.DEV ? "draft" : "published",
-  );
+  const categories = await getBlogCategories(getStoryblokVersion());
   const currentCategory = categories.get(kategorie);
 
   seo = {
@@ -41,9 +38,7 @@ try {
   content = null;
 }
 
-const categories = await getBlogCategories(
-  import.meta.env.DEV ? "draft" : "published",
-);
+const categories = await getBlogCategories(getStoryblokVersion());
 const currentCategory = categories.get(kategorie);
 ---
 
