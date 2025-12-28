@@ -5,6 +5,8 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
+    "build:production": "astro build --mode production",
+    "build:staging": "astro build --mode development",
     "preview": "astro preview",
     "astro": "astro",
     "types": "npx storyblok components pull --space 285719928053161 && npx storyblok types generate -s 285719928053161"
