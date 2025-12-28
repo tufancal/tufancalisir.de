@@ -9,7 +9,7 @@ import mkcert from "vite-plugin-mkcert";
 
 const env = loadEnv("", process.cwd(), "STORYBLOK");
 
-const isProduction = process.env.NODE_ENV === "production";
+const isProduction = import.meta.env.PROD;
 
 export default defineConfig({
   site: "https://tufancalisir.de",
