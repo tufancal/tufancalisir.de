@@ -9,18 +9,24 @@ This document covers Astro-specific architecture, routing patterns, and developm
 The project uses a focused Astro configuration with key integrations:
 
 ```javascript
+import cloudflare from "@astrojs/cloudflare";
+
+const enableBridge = process.env.ENABLE_STORYBLOK_BRIDGE === "true";
+const outputMode = enableBridge ? "server" : "static";
+
 export default defineConfig({
+  output: outputMode,
+  adapter: outputMode !== "static" ? cloudflare() : undefined,
   integrations: [
     storyblok({
-      output: "static",
       accessToken: env.STORYBLOK_TOKEN,
       components: { /* ... */ },
       apiOptions: { region: "eu" },
-      bridge: true,
+      bridge: enableBridge,
     }),
   ],
   vite: {
-    plugins: [tailwindcss(), mkcert()],
+    plugins: [tailwindcss(), ...(enableBridge ? [mkcert()] : [])],
     resolve: {
       alias: { "@": path.resolve("./") },
     },
@@ -29,10 +35,12 @@ export default defineConfig({
 ```
 
 **Important Configuration Details**:
-- **Static Output**: Site is fully static (SSG) - no SSR
+- **Conditional Output**: Server mode for staging (live editing), static for production
+- **Cloudflare Adapter**: Enabled when using server mode for SSR on Cloudflare Pages
+- **Bridge Mode**: Controlled by `ENABLE_STORYBLOK_BRIDGE` environment variable
 - **Path Alias**: `@/` maps to project root (configured in both Astro and TypeScript)
 - **Tailwind v4**: Uses Vite plugin instead of Astro integration
-- **HTTPS Dev Server**: `vite-plugin-mkcert` enables HTTPS for Storyblok Bridge compatibility
+- **HTTPS Dev Server**: `vite-plugin-mkcert` conditionally loaded when Bridge is enabled
 
 ## Project Structure
 
@@ -69,10 +77,11 @@ Simple static pages fetch their content from Storyblok:
 import Layout from "@/src/layouts/Layout.astro";
 import StoryblokComponent from "@storyblok/astro/StoryblokComponent.astro";
 import { useStoryblokApi } from "@storyblok/astro";
+import { getStoryblokVersion } from "@/src/utils/env";
 
 const storyblokApi = useStoryblokApi();
 const { data } = await storyblokApi.get("cdn/stories/home", {
-  version: import.meta.env.DEV ? "draft" : "published",
+  version: getStoryblokVersion(),
 });
 
 const content = data.story.content;
@@ -91,12 +100,14 @@ Blog posts use dynamic routing with `getStaticPaths()`:
 
 ```astro
 // src/pages/blog/[...slug].astro
+import { getStoryblokVersion } from "@/src/utils/env";
+
 export async function getStaticPaths() {
   const sbApi = useStoryblokApi();
 
   const { data } = await sbApi.get("cdn/stories", {
     content_type: "blogPost",
-    version: import.meta.env.DEV ? "draft" : "published",
+    version: getStoryblokVersion(),
   });
 
   const stories = Object.values(data.stories);
@@ -109,7 +120,7 @@ export async function getStaticPaths() {
 const sbApi = useStoryblokApi();
 const { slug } = Astro.params;
 const { data } = await sbApi.get(`cdn/stories/blog/${slug}`, {
-  version: import.meta.env.DEV ? "draft" : "published",
+  version: getStoryblokVersion(),
 });
 ```
 
@@ -135,19 +146,21 @@ The layout handles:
 
 ```astro
 ---
+import { getStoryblokVersion } from "@/src/utils/env";
+
 const storyblokApi = useStoryblokApi();
 
 // Fetch global data in parallel
 const { data: seoData } = await storyblokApi.get("cdn/stories/global/seo", {
-  version: import.meta.env.DEV ? "draft" : "published",
+  version: getStoryblokVersion(),
 });
 
 const { data: footerData } = await storyblokApi.get("cdn/stories/global/footer", {
-  version: import.meta.env.DEV ? "draft" : "published",
+  version: getStoryblokVersion(),
 });
 
 const { data: headerData } = await storyblokApi.get("cdn/stories/global/header", {
-  version: import.meta.env.DEV ? "draft" : "published",
+  version: getStoryblokVersion(),
 });
 
 const seo = seoData.story.content;
@@ -298,14 +311,19 @@ const image = generateResponsiveImageData(blok.image.filename, {
 
 ### Environment-Based Content Versioning
 
-All Storyblok API calls use this pattern:
+All Storyblok API calls use the `getStoryblokVersion()` helper:
 
 ```javascript
-version: import.meta.env.DEV ? "draft" : "published"
+import { getStoryblokVersion } from "@/src/utils/env";
+
+version: getStoryblokVersion()
 ```
 
-- **Development** (`npm run dev`): Fetches draft content (unpublished changes visible)
-- **Production** (`npm run build`): Fetches published content only
+The helper returns content version based on build mode:
+- **Development** (`npm run dev` or `npm run build:staging`): Returns `'draft'` for unpublished content
+- **Production** (`npm run build:production`): Returns `'published'` for production content
+
+**Important**: Never hardcode `"draft"` or `"published"` - always use the helper function.
 
 ### Type Generation Workflow
 
@@ -318,14 +336,16 @@ version: import.meta.env.DEV ? "draft" : "published"
 ### Build Process
 
 ```bash
-npm run build      # Builds to ./dist/
-npm run preview    # Serves built site locally
+npm run build:production  # Builds static site for production
+npm run build:staging     # Builds server mode for staging
+npm run preview          # Serves built site locally
 ```
 
 **Build Details**:
-- Generates static HTML for all routes
-- `getStaticPaths()` determines which pages to build
-- All Storyblok content fetched at build time (no runtime API calls)
+- **Production**: Generates static HTML for all routes, fetches published content
+- **Staging**: Uses server mode with SSR, fetches draft content, enables Storyblok Bridge
+- `getStaticPaths()` determines which pages to build (static mode only)
+- Content version controlled by `--mode` flag (development/production)
 
 ## Performance Optimizations
 
@@ -363,25 +383,31 @@ npm run preview    # Serves built site locally
 ### Fetching Content by Content Type
 
 ```javascript
+import { getStoryblokVersion } from "@/src/utils/env";
+
 const { data } = await sbApi.get("cdn/stories", {
   content_type: "blogPost",
-  version: import.meta.env.DEV ? "draft" : "published",
+  version: getStoryblokVersion(),
 });
 ```
 
 ### Fetching Single Story by Path
 
 ```javascript
+import { getStoryblokVersion } from "@/src/utils/env";
+
 const { data } = await sbApi.get("cdn/stories/blog/my-post", {
-  version: import.meta.env.DEV ? "draft" : "published",
+  version: getStoryblokVersion(),
 });
 ```
 
 ### Fetching Global Content
 
 ```javascript
+import { getStoryblokVersion } from "@/src/utils/env";
+
 const { data } = await sbApi.get("cdn/stories/global/header", {
-  version: import.meta.env.DEV ? "draft" : "published",
+  version: getStoryblokVersion(),
 });
 ```
 
@@ -433,7 +459,7 @@ These types provide IntelliSense for Storyblok component fields.
 ## Best Practices
 
 1. **Always Use Type Safety**: Import and use generated Storyblok types
-2. **Environment-Based Versioning**: Use `import.meta.env.DEV` for content version
+2. **Use Version Helper**: Always use `getStoryblokVersion()` from `@/src/utils/env` for content versioning
 3. **Global Data in Layout**: Fetch shared data (header, footer, SEO) in layout, not per page
 4. **Optional Chaining**: Use `?.` when mapping over Storyblok arrays
 5. **Responsive Images**: Always use `generateResponsiveImageData()` for hero/large images

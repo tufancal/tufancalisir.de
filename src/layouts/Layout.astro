@@ -73,7 +73,7 @@ const { seoPage, jsonld, noindex } = Astro.props;
     <meta name="twitter:image" content={seo.ogImage.filename} />
     <meta name="twitter:card" content="summary_large_image" />
     {
-      import.meta.env.DEV && (
+      getStoryblokVersion() === "draft" && (
         <link rel="preconnect" href="https://app.storyblok.com" />
       )
     }
@@ -113,7 +113,15 @@ const { seoPage, jsonld, noindex } = Astro.props;
       type="font/woff2"
       crossorigin
     />
-    {jsonld && <script type="application/ld+json" is:inline set:html={schemaToJson(jsonld)} />}
+    {
+      jsonld && (
+        <script
+          type="application/ld+json"
+          is:inline
+          set:html={schemaToJson(jsonld)}
+        />
+      )
+    }
   </head>
   <body class="bg-gallery">
     <StoryblokComponent blok={header} />

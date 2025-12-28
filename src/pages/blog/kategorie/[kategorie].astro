@@ -8,9 +8,7 @@ import Breadcrumb from "@/src/components/molecules/Breadcrumb.astro";
 import { getStoryblokVersion } from "@/src/utils/env";
 
 export async function getStaticPaths() {
-  const categories = await getBlogCategories(
-    getStoryblokVersion(),
-  );
+  const categories = await getBlogCategories(getStoryblokVersion());
 
   return Array.from(categories.values()).map((category) => {
     return { params: { kategorie: category.value } };
@@ -30,9 +28,7 @@ try {
   seo = extractSeoData(content);
 } catch (error) {
   // If no story exists, use default SEO
-  const categories = await getBlogCategories(
-    import.meta.env.DEV ? "draft" : "published",
-  );
+  const categories = await getBlogCategories(getStoryblokVersion());
   const currentCategory = categories.get(kategorie);
 
   seo = {
@@ -42,9 +38,7 @@ try {
   content = null;
 }
 
-const categories = await getBlogCategories(
-  import.meta.env.DEV ? "draft" : "published",
-);
+const categories = await getBlogCategories(getStoryblokVersion());
 const currentCategory = categories.get(kategorie);
 ---
 

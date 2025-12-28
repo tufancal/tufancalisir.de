@@ -2,7 +2,6 @@
 import { renderRichText, type StoryblokRichTextNode } from "@storyblok/astro";
 import { getStoryblokVersion } from "@/src/utils/env";
 import { useStoryblokApi } from "@storyblok/astro";
-import { getStoryblokVersion } from "@/src/utils/env";
 import { formatDate } from "@/src/utils/date";
 import { getBlogCategories, getBlogGlobalData } from "@/src/utils/storyblok";
 import BlogPostCard from "@/src/components/molecules/BlogPostCard.astro";
@@ -23,14 +22,10 @@ const { data } = await storyblokApi.get("cdn/stories", {
 });
 
 // Fetch blog globals
-const blogGlobalData = await getBlogGlobalData(
-  import.meta.env.DEV ? "draft" : "published",
-);
+const blogGlobalData = await getBlogGlobalData(getStoryblokVersion());
 
 // Get category information
-const categoriesMap = await getBlogCategories(
-  import.meta.env.DEV ? "draft" : "published",
-);
+const categoriesMap = await getBlogCategories(getStoryblokVersion());
 const currentCategory = categoriesMap.get(categoryValue);
 
 // Filter posts by category

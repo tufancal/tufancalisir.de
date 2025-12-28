@@ -2,7 +2,6 @@
 import { renderRichText, type StoryblokRichTextNode } from "@storyblok/astro";
 import { getStoryblokVersion } from "@/src/utils/env";
 import { useStoryblokApi } from "@storyblok/astro";
-import { getStoryblokVersion } from "@/src/utils/env";
 import { formatDate } from "@/src/utils/date";
 import { getBlogCategories } from "@/src/utils/storyblok";
 import BlogPostCard from "@/src/components/molecules/BlogPostCard.astro";
@@ -24,9 +23,7 @@ const { data } = await storyblokApi.get("cdn/stories", {
 });
 
 // Fetch all categories for the filter
-const categoriesMap = await getBlogCategories(
-  import.meta.env.DEV ? "draft" : "published",
-);
+const categoriesMap = await getBlogCategories(getStoryblokVersion());
 const categories = Array.from(categoriesMap.values());
 
 // Transform stories into card data

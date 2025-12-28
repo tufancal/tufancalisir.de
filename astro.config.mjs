@@ -9,12 +9,7 @@ import { loadEnv } from "vite";
 import mkcert from "vite-plugin-mkcert";
 
 const env = loadEnv("", process.cwd(), "STORYBLOK");
-
-// Enable Bridge for development and staging (set ENABLE_STORYBLOK_BRIDGE=true in Cloudflare Pages)
-// Disable for production builds
 const enableBridge = process.env.ENABLE_STORYBLOK_BRIDGE === "true";
-
-// Use server mode for staging (enables SSR for Bridge), static for production
 const outputMode = enableBridge ? "server" : "static";
 
 export default defineConfig({

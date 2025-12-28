@@ -6,9 +6,10 @@ This document covers the Storyblok CMS integration patterns, component architect
 
 Storyblok is the headless CMS powering all content in this project. The integration uses:
 - **@storyblok/astro** - Official Astro integration
-- **Static Generation** - All content fetched at build time
+- **Conditional Output Mode** - Server mode for staging (live editing), static for production
+- **@astrojs/cloudflare** - Adapter for SSR mode on Cloudflare Pages
 - **EU Region** - API configured for European data center
-- **Bridge Mode** - Live preview in Storyblok visual editor
+- **Bridge Mode** - Live preview in Storyblok visual editor (staging only)
 - **TypeScript Types** - Auto-generated from Storyblok schemas
 
 ## Configuration
@@ -16,12 +17,17 @@ Storyblok is the headless CMS powering all content in this project. The integrat
 ### Astro Config (`astro.config.mjs`)
 
 ```javascript
+import cloudflare from "@astrojs/cloudflare";
 import { storyblok } from "@storyblok/astro";
 
+const enableBridge = process.env.ENABLE_STORYBLOK_BRIDGE === "true";
+const outputMode = enableBridge ? "server" : "static";
+
 export default defineConfig({
+  output: outputMode,
+  adapter: outputMode !== "static" ? cloudflare() : undefined,
   integrations: [
     storyblok({
-      output: "static",
       accessToken: env.STORYBLOK_TOKEN,
       components: {
         link: "components/Link",
@@ -37,18 +43,19 @@ export default defineConfig({
       apiOptions: {
         region: "eu",
       },
-      bridge: true,
+      bridge: enableBridge,
     }),
   ],
 });
 ```
 
 **Key Configuration**:
-- `output: "static"` - Generates static site (SSG, no SSR)
+- `output` - Conditional: `"server"` for live editing (staging), `"static"` for production
+- `adapter` - Cloudflare adapter enabled when using server mode
 - `accessToken` - Loaded from environment variable
 - `components` - Maps Storyblok component names to Astro files
 - `region: "eu"` - Uses EU API endpoint
-- `bridge: true` - Enables live preview in Storyblok editor
+- `bridge` - Controlled by `ENABLE_STORYBLOK_BRIDGE` environment variable
 
 ### Component Mapping
 
@@ -70,11 +77,20 @@ Required in `.env`:
 ```bash
 STORYBLOK_TOKEN=your_preview_token_here
 STORYBLOK_SPACE_ID=285719928053161
+
+# Enable Storyblok Bridge and SSR for live editing
+# true: server mode with Bridge (local dev, staging)
+# false: static mode (production)
+ENABLE_STORYBLOK_BRIDGE=true
 ```
 
 **Token**: Get from Storyblok Settings → Access Tokens → Preview token
 
 **Space ID**: Used by `npm run types` command to generate TypeScript definitions
+
+**ENABLE_STORYBLOK_BRIDGE**: Controls output mode and Bridge enablement
+- Set to `true` in Cloudflare Pages staging environment for live preview
+- Set to `false` in production for optimal static performance
 
 ## Content Architecture
 
@@ -103,16 +119,18 @@ Stories/
 Global content is fetched in `Layout.astro` and used site-wide:
 
 ```astro
+import { getStoryblokVersion } from "@/src/utils/env";
+
 const { data: seoData } = await storyblokApi.get("cdn/stories/global/seo", {
-  version: import.meta.env.DEV ? "draft" : "published",
+  version: getStoryblokVersion(),
 });
 
 const { data: headerData } = await storyblokApi.get("cdn/stories/global/header", {
-  version: import.meta.env.DEV ? "draft" : "published",
+  version: getStoryblokVersion(),
 });
 
 const { data: footerData } = await storyblokApi.get("cdn/stories/global/footer", {
-  version: import.meta.env.DEV ? "draft" : "published",
+  version: getStoryblokVersion(),
 });
 ```
 
@@ -138,8 +156,10 @@ const storyblokApi = useStoryblokApi();
 ### Fetching a Single Story
 
 ```javascript
+import { getStoryblokVersion } from "@/src/utils/env";
+
 const { data } = await storyblokApi.get("cdn/stories/home", {
-  version: import.meta.env.DEV ? "draft" : "published",
+  version: getStoryblokVersion(),
 });
 
 const content = data.story.content;
@@ -163,9 +183,11 @@ const content = data.story.content;
 ### Fetching Stories by Content Type
 
 ```javascript
+import { getStoryblokVersion } from "@/src/utils/env";
+
 const { data } = await sbApi.get("cdn/stories", {
   content_type: "blogPost",
-  version: import.meta.env.DEV ? "draft" : "published",
+  version: getStoryblokVersion(),
 });
 
 const stories = Object.values(data.stories);
@@ -175,14 +197,17 @@ const stories = Object.values(data.stories);
 
 ### Version Control
 
-All API calls use environment-based versioning:
+All API calls use the `getStoryblokVersion()` helper:
 
 ```javascript
-version: import.meta.env.DEV ? "draft" : "published"
+import { getStoryblokVersion } from "@/src/utils/env";
+
+version: getStoryblokVersion()
 ```
 
-- **Development** (`npm run dev`): Shows draft (unpublished) content
-- **Production** (`npm run build`): Only shows published content
+The helper returns content version based on build mode:
+- **Development** (`npm run dev` or `npm run build:staging`): Returns `'draft'` for unpublished content
+- **Production** (`npm run build:production`): Returns `'published'` for production content
 
 **Important**: Never hardcode `"draft"` or `"published"`.
 
@@ -576,10 +601,12 @@ const relatedStories = await Promise.all(
 
 ```astro
 ---
+import { getStoryblokVersion } from "@/src/utils/env";
+
 // Footer.astro fetches its own global data
 const { data: socialMediaData } = await storyblokApi.get(
   "cdn/stories/global/social-media",
-  { version: import.meta.env.DEV ? "draft" : "published" }
+  { version: getStoryblokVersion() }
 );
 
 const socialMedia = socialMediaData.story.content;
@@ -588,25 +615,37 @@ const socialMedia = socialMediaData.story.content;
 
 **Use Case**: Component-specific global data that's not needed site-wide.
 
-## Static Site Generation
+## Deployment Modes
 
-### How SSG Works with Storyblok
+This project supports two deployment modes controlled by `ENABLE_STORYBLOK_BRIDGE`:
 
-1. **Build Time**: All Storyblok API calls happen during `npm run build`
+### Production Mode (Static)
+When `ENABLE_STORYBLOK_BRIDGE=false`:
+1. **Build Time**: All Storyblok API calls happen during `npm run build:production`
 2. **Content Fetching**: Published content pulled via API
 3. **Static HTML**: Generated for all routes
 4. **No Runtime API**: No Storyblok API calls in production
+5. **Optimal Performance**: Pre-rendered static pages
+
+### Staging Mode (Server/SSR)
+When `ENABLE_STORYBLOK_BRIDGE=true`:
+1. **Server-Side Rendering**: Cloudflare adapter enables SSR
+2. **Live Preview**: Storyblok Bridge loads for visual editing
+3. **Draft Content**: Shows unpublished changes
+4. **Real-time Updates**: Changes in Storyblok editor reflect immediately
 
 ### Dynamic Routes with SSG
 
 ```astro
 // src/pages/blog/[...slug].astro
+import { getStoryblokVersion } from "@/src/utils/env";
+
 export async function getStaticPaths() {
   const sbApi = useStoryblokApi();
 
   const { data } = await sbApi.get("cdn/stories", {
     content_type: "blogPost",
-    version: import.meta.env.DEV ? "draft" : "published",
+    version: getStoryblokVersion(),
   });
 
   const stories = Object.values(data.stories);
@@ -634,7 +673,7 @@ To auto-rebuild on content changes:
 
 ## Best Practices
 
-1. **Environment-Based Versioning**: Always use `import.meta.env.DEV` for version
+1. **Use Version Helper**: Always use `getStoryblokVersion()` from `@/src/utils/env` for content versioning
 2. **Type Everything**: Run `npm run types` after component changes
 3. **Use storyblokEditable**: Spread on root element of every component
 4. **Optional Chaining**: Use `blok.field?.value` for nullable fields
@@ -650,20 +689,22 @@ To auto-rebuild on content changes:
 ### Fetching Content
 
 ```javascript
+import { getStoryblokVersion } from "@/src/utils/env";
+
 // Single story
 const { data } = await storyblokApi.get("cdn/stories/home", {
-  version: import.meta.env.DEV ? "draft" : "published",
+  version: getStoryblokVersion(),
 });
 
 // Stories by content type
 const { data } = await storyblokApi.get("cdn/stories", {
   content_type: "blogPost",
-  version: import.meta.env.DEV ? "draft" : "published",
+  version: getStoryblokVersion(),
 });
 
 // Nested path
 const { data } = await storyblokApi.get("cdn/stories/blog/my-post", {
-  version: import.meta.env.DEV ? "draft" : "published",
+  version: getStoryblokVersion(),
 });
 ```
 
