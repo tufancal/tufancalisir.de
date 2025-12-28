@@ -12,9 +12,6 @@ const env = loadEnv("", process.cwd(), "STORYBLOK");
 const enableBridge = process.env.ENABLE_STORYBLOK_BRIDGE === "true";
 const outputMode = enableBridge ? "server" : "static";
 
-// Use server mode for staging (enables SSR for Bridge), static for production
-const outputMode = enableBridge ? "server" : "static";
-
 export default defineConfig({
   site: "https://tufancalisir.de",
   output: outputMode,
