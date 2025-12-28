@@ -9,7 +9,10 @@ import mkcert from "vite-plugin-mkcert";
 
 const env = loadEnv("", process.cwd(), "STORYBLOK");
 
-const isProduction = import.meta.env.PROD;
+// Enable Bridge for development and staging (set ENABLE_STORYBLOK_BRIDGE=true)
+// Disable for production builds
+const enableBridge =
+  process.env.ENABLE_STORYBLOK_BRIDGE === "true" || import.meta.env.DEV;
 
 export default defineConfig({
   site: "https://tufancalisir.de",
@@ -53,11 +56,11 @@ export default defineConfig({
       apiOptions: {
         region: "eu",
       },
-      bridge: !isProduction,
+      bridge: enableBridge,
     }),
   ],
   vite: {
-    plugins: [tailwindcss(), ...(!isProduction ? [mkcert()] : [])],
+    plugins: [tailwindcss(), ...(enableBridge ? [mkcert()] : [])],
     resolve: {
       alias: {
         "@": path.resolve("./"),
