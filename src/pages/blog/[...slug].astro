@@ -5,13 +5,14 @@ import { useStoryblokApi } from "@storyblok/astro";
 import { extractSeoData } from "@/src/utils/storyblok";
 import { createBlogPostSchema } from "@/src/utils/jsonld";
 import Breadcrumb from "@/src/components/molecules/Breadcrumb.astro";
+import { getStoryblokVersion } from "@/src/utils/env";
 
 export async function getStaticPaths() {
   const sbApi = useStoryblokApi();
 
   const { data } = await sbApi.get("cdn/stories", {
     content_type: "blogPost",
-    version: import.meta.env.DEV ? "draft" : "published",
+    version: getStoryblokVersion(),
   });
 
   const stories = Object.values(data.stories);
@@ -32,7 +33,7 @@ let content, publishedAt, firstPublishedAt;
 
 try {
   const { data } = await sbApi.get(`cdn/stories/blog/${slug}`, {
-    version: import.meta.env.DEV ? "draft" : "published",
+    version: getStoryblokVersion(),
   });
 
   content = data.story.content;
@@ -46,7 +47,7 @@ const seo = extractSeoData(content);
 
 // Fetch global SEO data for author information
 const { data: seoData } = await sbApi.get("cdn/stories/global/seo", {
-  version: import.meta.env.DEV ? "draft" : "published",
+  version: getStoryblokVersion(),
 });
 const globalSeo = seoData.story.content;
 

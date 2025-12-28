@@ -1,6 +1,8 @@
 ---
 import { renderRichText, type StoryblokRichTextNode } from "@storyblok/astro";
+import { getStoryblokVersion } from "@/src/utils/env";
 import { useStoryblokApi } from "@storyblok/astro";
+import { getStoryblokVersion } from "@/src/utils/env";
 import { formatDate } from "@/src/utils/date";
 import { getBlogCategories } from "@/src/utils/storyblok";
 import BlogPostCard from "@/src/components/molecules/BlogPostCard.astro";
@@ -16,7 +18,7 @@ const storyblokApi = useStoryblokApi();
 
 // Fetch all blog posts
 const { data } = await storyblokApi.get("cdn/stories", {
-  version: import.meta.env.DEV ? "draft" : "published",
+  version: getStoryblokVersion(),
   starts_with: "blog",
   content_type: "blogPost",
 });

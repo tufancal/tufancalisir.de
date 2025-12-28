@@ -4,10 +4,13 @@ import StoryblokComponent from "@storyblok/astro/StoryblokComponent.astro";
 import { useStoryblokApi } from "@storyblok/astro";
 import { extractSeoData } from "@/src/utils/storyblok";
 import { createPersonSchema, createWebsiteSchema } from "@/src/utils/jsonld";
+import { getStoryblokVersion } from "@/src/utils/env";
 
 const storyblokApi = useStoryblokApi();
+const contentVersion = getStoryblokVersion();
+
 const { data } = await storyblokApi.get("cdn/stories/home", {
-  version: import.meta.env.DEV ? "draft" : "published",
+  version: contentVersion,
 });
 
 const content = data.story.content;
@@ -15,7 +18,7 @@ const seo = extractSeoData(content);
 
 // Fetch global SEO data for author information
 const { data: seoData } = await storyblokApi.get("cdn/stories/global/seo", {
-  version: import.meta.env.DEV ? "draft" : "published",
+  version: contentVersion,
 });
 const globalSeo = seoData.story.content;
 

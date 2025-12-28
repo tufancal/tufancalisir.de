@@ -1,12 +1,13 @@
 ---
 import { useStoryblokApi } from "@storyblok/astro";
+import { getStoryblokVersion } from "@/src/utils/env";
 
 const storyblokApi = useStoryblokApi();
 
 const { data: socialMediaData } = await storyblokApi.get(
   "cdn/stories/global/social-media",
   {
-    version: import.meta.env.DEV ? "draft" : "published",
+    version: getStoryblokVersion(),
   },
 );
 

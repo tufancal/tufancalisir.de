@@ -4,13 +4,14 @@ import StoryblokComponent from "@storyblok/astro/StoryblokComponent.astro";
 import { useStoryblokApi } from "@storyblok/astro";
 import { extractSeoData } from "@/src/utils/storyblok";
 import Breadcrumb from "@/src/components/molecules/Breadcrumb.astro";
+import { getStoryblokVersion } from "@/src/utils/env";
 
 export async function getStaticPaths() {
   const sbApi = useStoryblokApi();
 
   // Fetch all stories except blog posts and global content
   const { data } = await sbApi.get("cdn/stories", {
-    version: import.meta.env.DEV ? "draft" : "published",
+    version: getStoryblokVersion(),
     excluding_slugs: "home,blog/*,global/*",
   });
 
@@ -29,8 +30,8 @@ const { slug } = Astro.params;
 let content, seo;
 
 try {
-  const { data } = await sbApi.get(`cdn/stories/${slug}`, {
-    version: import.meta.env.DEV ? "draft" : "published",
+  const { data} = await sbApi.get(`cdn/stories/${slug}`, {
+    version: getStoryblokVersion(),
   });
 
   content = data.story.content;

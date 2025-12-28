@@ -9,10 +9,9 @@ import mkcert from "vite-plugin-mkcert";
 
 const env = loadEnv("", process.cwd(), "STORYBLOK");
 
-// Enable Bridge for development and staging (set ENABLE_STORYBLOK_BRIDGE=true)
+// Enable Bridge for development and staging (set ENABLE_STORYBLOK_BRIDGE=true in Cloudflare Pages)
 // Disable for production builds
-const enableBridge =
-  process.env.ENABLE_STORYBLOK_BRIDGE === "true" || import.meta.env.DEV;
+const enableBridge = process.env.ENABLE_STORYBLOK_BRIDGE === "true";
 
 export default defineConfig({
   site: "https://tufancalisir.de",

@@ -4,6 +4,7 @@ import { useStoryblokApi } from "@storyblok/astro";
 import StoryblokComponent from "@storyblok/astro/StoryblokComponent.astro";
 import type { JSONLDSchema } from "@/src/utils/jsonld";
 import { schemaToJson } from "@/src/utils/jsonld";
+import { getStoryblokVersion } from "@/src/utils/env";
 
 interface Props {
   seoPage: {
@@ -15,19 +16,20 @@ interface Props {
 }
 
 const storyblokApi = useStoryblokApi();
+const contentVersion = getStoryblokVersion();
 
 let seo, header, footer;
 
 try {
   const [seoData, footerData, headerData] = await Promise.all([
     storyblokApi.get("cdn/stories/global/seo", {
-      version: import.meta.env.DEV ? "draft" : "published",
+      version: contentVersion,
     }),
     storyblokApi.get("cdn/stories/global/footer", {
-      version: import.meta.env.DEV ? "draft" : "published",
+      version: contentVersion,
     }),
     storyblokApi.get("cdn/stories/global/header", {
-      version: import.meta.env.DEV ? "draft" : "published",
+      version: contentVersion,
     }),
   ]);
 

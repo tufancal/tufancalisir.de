@@ -3,10 +3,11 @@ import Layout from "@/src/layouts/Layout.astro";
 import { extractSeoData } from "@/src/utils/storyblok";
 import { useStoryblokApi } from "@storyblok/astro";
 import StoryblokComponent from "@storyblok/astro/StoryblokComponent.astro";
+import { getStoryblokVersion } from "@/src/utils/env";
 
 const storyblokApi = useStoryblokApi();
 const { data } = await storyblokApi.get("cdn/stories/blog/kategorie", {
-  version: import.meta.env.DEV ? "draft" : "published",
+  version: getStoryblokVersion(),
 });
 
 const content = data.story.content;
