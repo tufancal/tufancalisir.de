@@ -5,6 +5,7 @@ import StoryblokComponent from "@storyblok/astro/StoryblokComponent.astro";
 import type { JSONLDSchema } from "@/src/utils/jsonld";
 import { schemaToJson } from "@/src/utils/jsonld";
 import { getStoryblokVersion } from "@/src/utils/env";
+import { ClientRouter } from "astro:transitions";
 
 interface Props {
   seoPage: {
@@ -122,6 +123,7 @@ const { seoPage, jsonld, noindex } = Astro.props;
         />
       )
     }
+    <ClientRouter />
   </head>
   <body class="bg-gallery">
     <StoryblokComponent blok={header} />
