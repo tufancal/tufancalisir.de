@@ -48,6 +48,7 @@ const rel = target === "_blank" ? "noopener noreferrer" : undefined;
   target={target}
   rel={rel}
   class={buttonClasses}
+  data-astro-reload={blok.url.anchor ? true : undefined}
 >
   {blok.text}
 </a>
