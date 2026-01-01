@@ -175,17 +175,29 @@ export function createBlogPostSchema(data: {
  * Creates a BreadcrumbList schema
  */
 export function createBreadcrumbSchema(
-  items: Array<{ name: string; url?: string }>
+  items: Array<{ name: string; url?: string }>,
+  baseUrl?: string
 ): BreadcrumbListSchema {
   return {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
-    itemListElement: items.map((item, index) => ({
-      "@type": "ListItem",
-      position: index + 1,
-      name: item.name,
-      ...(item.url && { item: item.url }),
-    })),
+    itemListElement: items.map((item, index) => {
+      let itemUrl = item.url;
+
+      // Convert relative URLs to absolute URLs if baseUrl is provided
+      if (itemUrl && baseUrl) {
+        if (!itemUrl.startsWith('http://') && !itemUrl.startsWith('https://')) {
+          itemUrl = new URL(itemUrl, baseUrl).toString();
+        }
+      }
+
+      return {
+        "@type": "ListItem",
+        position: index + 1,
+        name: item.name,
+        ...(itemUrl && { item: itemUrl }),
+      };
+    }),
   };
 }
 
