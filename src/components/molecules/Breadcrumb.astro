@@ -12,8 +12,11 @@ interface Props {
 
 const { items } = Astro.props;
 
+// Get the base URL for converting relative URLs to absolute URLs
+const baseUrl = Astro.url.origin;
+
 // Generate JSON-LD schema for SEO
-const jsonldSchema: JSONLDSchema = createBreadcrumbSchema(items);
+const jsonldSchema: JSONLDSchema = createBreadcrumbSchema(items, baseUrl);
 
 // Make the schema available to parent components via a slot prop pattern
 // We'll return it as a data attribute that the Layout can pick up
@@ -44,5 +47,8 @@ const jsonldSchema: JSONLDSchema = createBreadcrumbSchema(items);
   </div>
 </nav>
 
-<!-- Expose JSON-LD schema via a script that can be picked up by Layout -->
-<script type="application/ld+json" is:inline set:html={JSON.stringify(jsonldSchema)} />
+<script
+  type="application/ld+json"
+  is:inline
+  set:html={JSON.stringify(jsonldSchema)}
+/>

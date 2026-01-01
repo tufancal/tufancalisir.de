@@ -22,9 +22,15 @@ export default function Select({
   placeholder = "Bitte wählen...",
   className = "",
   id,
+  defaultValue,
+  value,
   ...props
 }: SelectProps) {
   const selectId = id || props.name;
+
+  // Use controlled (value) if provided, otherwise uncontrolled (defaultValue)
+  const selectValue = value !== undefined ? value : undefined;
+  const selectDefaultValue = value === undefined ? (defaultValue ?? "") : undefined;
 
   return (
     <div className="form-control">
@@ -44,9 +50,11 @@ export default function Select({
               ? `${selectId}-helper`
               : undefined
         }
+        value={selectValue}
+        defaultValue={selectDefaultValue}
         {...props}
       >
-        <option disabled selected value="">
+        <option disabled value="">
           {placeholder}
         </option>
         {options.map((option) => (
