@@ -9,7 +9,7 @@
     "build:staging": "astro build --mode development",
     "preview": "astro preview",
     "astro": "astro",
-    "types": "npx storyblok components pull --space 285719928053161 && npx storyblok types generate -s 285719928053161"
+    "types": "npx storyblok components pull --space $STORYBLOK_SPACE_ID && npx storyblok types generate -s $STORYBLOK_SPACE_ID"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^12.6.12",
