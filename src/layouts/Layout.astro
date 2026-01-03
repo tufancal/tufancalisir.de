@@ -63,6 +63,12 @@ const { seoPage, jsonld, noindex } = Astro.props;
     {noindex && <meta name="robots" content="noindex, nofollow" />}
     <link rel="canonical" href={canonicalUrl} />
     <link rel="sitemap" href="/sitemap-index.xml" />
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title="Tufan Calisir - Blog RSS Feed"
+      href={new URL("rss.xml", Astro.site)}
+    />
     <meta property="og:title" content={`${seoPage.title} | ${seo.siteName}`} />
     <meta property="og:description" content={seoPage.description} />
     <meta property="og:type" content="website" />

@@ -2,10 +2,9 @@
 import { storyblokEditable, type SbBlokData } from "@storyblok/astro";
 import { getStoryblokVersion } from "@/src/utils/env";
 import StoryblokComponent from "@storyblok/astro/StoryblokComponent.astro";
-import { getStoryblokVersion } from "@/src/utils/env";
 import { useStoryblokApi } from "@storyblok/astro";
-import { getStoryblokVersion } from "@/src/utils/env";
 import { resolveStoryblokUrl } from "@/src/utils/storyblok";
+import Link from "@/src/components/atoms/Link.astro";
 import type { Footer } from "@/.storyblok/types/285719928053161/storyblok-components";
 
 interface Props {
@@ -43,7 +42,10 @@ const sitemapLinks =
       <h2 class="footer-title">Sitemap</h2>
       {
         sitemapLinks.map((link: any) => (
-          <a href={resolveStoryblokUrl(link.url)} class="link link-hover lg:text-base">
+          <a
+            href={resolveStoryblokUrl(link.url)}
+            class="link link-hover lg:text-base"
+          >
             {link.text}
           </a>
         ))
@@ -76,4 +78,22 @@ const sitemapLinks =
       </div>
     )
   }
+  <div class="mt-4 text-center">
+    <Link
+      blok={{
+        url: {
+          url: "rss.xml",
+          linktype: "story",
+          fieldtype: "multilink",
+          id: "rss.xml",
+          cached_url: "rss.xml",
+        },
+        text: "RSS Feed",
+        variant: "primary",
+        size: "sm",
+        component: "link",
+        _uid: "rss-feed",
+      }}
+    />
+  </div>
 </footer>
