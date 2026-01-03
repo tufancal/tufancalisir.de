@@ -120,27 +120,6 @@
 }
 
 @theme {
-  /* --color-mine-shaft: #262626;
-  --color-black: #000000;
-  --color-alabaster: #fafafa;
-  --color-alto: #d9d9d9;
-  --color-gallery: #f0f0f0; */
-
   --font-primary: "Hind", sans-serif;
   --font-secondary: "Cardo", serif;
-
-  /* --container-3xs: 16rem;
-  --container-2xs: 18rem;
-  --container-xs: 20rem;
-  --container-sm: 24rem;
-  --container-md: 28rem;
-  --container-lg: 32rem;
-  --container-xl: 36rem;
-  --container-2xl: 42rem;
-  --container-3xl: 48rem;
-  --container-4xl: 56rem;
-  --container-5xl: 64rem;
-  --container-6xl: 72rem;
-  --container-7xl: 80rem;
-  --container-8xl: 55rem; */
 }

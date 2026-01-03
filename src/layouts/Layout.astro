@@ -6,6 +6,7 @@ import type { JSONLDSchema } from "@/src/utils/jsonld";
 import { schemaToJson } from "@/src/utils/jsonld";
 import { getStoryblokVersion } from "@/src/utils/env";
 import { ClientRouter } from "astro:transitions";
+import Pagefind from "@/src/components/atoms/Pagefind.astro";
 
 interface Props {
   seoPage: {
@@ -133,6 +134,7 @@ const { seoPage, jsonld, noindex } = Astro.props;
   </head>
   <body class="bg-gallery">
     <StoryblokComponent blok={header} />
+    <Pagefind />
     <main>
       <slot />
     </main>

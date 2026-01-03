@@ -3,11 +3,11 @@ import react from "@astrojs/react";
 import sitemap from "@astrojs/sitemap";
 import { storyblok } from "@storyblok/astro";
 import tailwindcss from "@tailwindcss/vite";
+import pagefind from "astro-pagefind";
 import { defineConfig } from "astro/config";
 import path from "path";
 import { loadEnv } from "vite";
 import mkcert from "vite-plugin-mkcert";
-
 const env = loadEnv("", process.cwd(), "STORYBLOK");
 const enableBridge = process.env.ENABLE_STORYBLOK_BRIDGE === "true";
 const outputMode = enableBridge ? "server" : "static";
@@ -19,6 +19,9 @@ export default defineConfig({
   integrations: [
     react(),
     sitemap(),
+    pagefind({
+      bundledCSSPath: false,
+    }),
     storyblok({
       accessToken: env.STORYBLOK_TOKEN,
       components: {
