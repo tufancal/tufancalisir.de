@@ -157,3 +157,64 @@ const processedCopy = await processRichTextWithCodeHighlighting(
     )
   }
 </article>
+
+<div id="giscus" class="container mx-auto mb-4 max-w-3xl px-4 lg:mb-8"></div>
+
+<script is:inline>
+  let giscusLoaded = false;
+
+  function loadGiscus() {
+    const giscusContainer = document.getElementById("giscus");
+    if (!giscusContainer) return;
+
+    giscusContainer.innerHTML = "";
+
+    const script = document.createElement("script");
+    script.src = "https://giscus.app/client.js";
+    script.setAttribute("data-repo", "tufancal/tufancalisir.de");
+    script.setAttribute("data-repo-id", "R_kgDOPXscaw");
+    script.setAttribute("data-category", "General");
+    script.setAttribute("data-category-id", "DIC_kwDOPXsca84C0iFm");
+    script.setAttribute("data-mapping", "pathname");
+    script.setAttribute("data-strict", "0");
+    script.setAttribute("data-reactions-enabled", "1");
+    script.setAttribute("data-emit-metadata", "0");
+    script.setAttribute("data-input-position", "top");
+    script.setAttribute("data-theme", "preferred_color_scheme");
+    script.setAttribute("data-lang", "de");
+    script.setAttribute("data-loading", "lazy");
+    script.crossOrigin = "anonymous";
+    script.async = true;
+
+    giscusContainer.appendChild(script);
+    giscusLoaded = true;
+  }
+
+  function setupGiscusObserver() {
+    const giscusContainer = document.getElementById("giscus");
+    if (!giscusContainer) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && !giscusLoaded) {
+            loadGiscus();
+            observer.disconnect();
+          }
+        });
+      },
+      {
+        rootMargin: "300px",
+      },
+    );
+
+    observer.observe(giscusContainer);
+  }
+
+  setupGiscusObserver();
+
+  document.addEventListener("astro:after-swap", () => {
+    giscusLoaded = false;
+    setupGiscusObserver();
+  });
+</script>
