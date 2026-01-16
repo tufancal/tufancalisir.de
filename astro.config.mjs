@@ -19,9 +19,13 @@ export default defineConfig({
   integrations: [
     react(),
     sitemap(),
-    pagefind({
-      bundledCSSPath: false,
-    }),
+    ...(outputMode === "static"
+      ? [
+          pagefind({
+            bundledCSSPath: false,
+          }),
+        ]
+      : []),
     storyblok({
       accessToken: env.STORYBLOK_TOKEN,
       components: {
