@@ -15,17 +15,13 @@ const outputMode = enableBridge ? "server" : "static";
 export default defineConfig({
   site: "https://tufancalisir.de",
   output: outputMode,
-  adapter: outputMode !== "static" ? cloudflare() : undefined,
+  adapter: outputMode !== "static" ? cloudflare({platformProxy: {enabled: true}}) : undefined,
   integrations: [
     react(),
     sitemap(),
-    ...(outputMode === "static"
-      ? [
-          pagefind({
-            bundledCSSPath: false,
-          }),
-        ]
-      : []),
+    pagefind({
+      bundledCSSPath: false,
+    }),
     storyblok({
       accessToken: env.STORYBLOK_TOKEN,
       components: {
