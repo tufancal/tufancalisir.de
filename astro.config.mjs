@@ -22,9 +22,9 @@ export default defineConfig({
   integrations: [
     react(),
     sitemap(),
-    pagefind({
-      bundledCSSPath: false,
-    }),
+    // Pagefind uses node:path/posix which isn't supported in Cloudflare Workers
+    // Only include in static builds, not SSR (Storyblok preview)
+    ...(!enableBridge ? [pagefind({ bundledCSSPath: false })] : []),
     storyblok({
       accessToken: env.STORYBLOK_TOKEN,
       components: {
