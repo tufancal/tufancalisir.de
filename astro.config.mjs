@@ -15,7 +15,10 @@ const outputMode = enableBridge ? "server" : "static";
 export default defineConfig({
   site: "https://tufancalisir.de",
   output: outputMode,
-  adapter: outputMode !== "static" ? cloudflare({platformProxy: {enabled: true}}) : undefined,
+  adapter: outputMode !== "static" ? cloudflare({
+    platformProxy: { enabled: true },
+    imageService: "passthrough",
+  }) : undefined,
   integrations: [
     react(),
     sitemap(),
