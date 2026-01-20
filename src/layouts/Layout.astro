@@ -6,7 +6,13 @@ import type { JSONLDSchema } from "@/src/utils/jsonld";
 import { schemaToJson } from "@/src/utils/jsonld";
 import { getStoryblokVersion } from "@/src/utils/env";
 import { ClientRouter } from "astro:transitions";
-import Pagefind from "@/src/components/atoms/Pagefind.astro";
+
+// Pagefind uses node:path/posix which isn't supported in Cloudflare Workers
+// Conditionally import only in static mode
+let Pagefind: typeof import("@/src/components/atoms/Pagefind.astro").default | null = null;
+if (!import.meta.env.SSR) {
+  Pagefind = (await import("@/src/components/atoms/Pagefind.astro")).default;
+}
 
 interface Props {
   seoPage: {
@@ -134,7 +140,8 @@ const { seoPage, jsonld, noindex } = Astro.props;
   </head>
   <body class="bg-gallery">
     <StoryblokComponent blok={header} />
-    <Pagefind />
+    {/* Pagefind uses node:path/posix which isn't supported in Cloudflare Workers SSR */}
+    {Pagefind && <Pagefind />}
     <main>
       <slot />
     </main>
