@@ -38,7 +38,7 @@ headlineAnchorIds.push({ id: "tl-dr", text: blogGlobalData.tl_dr_headline });
 // Generate responsive image data
 const image = generateResponsiveImageData(blok.image.filename as string, {
   breakpoints: [240, 320, 400, 560, 800, 1024, 1280],
-  aspectRatio: 3 / 2,
+  aspectRatio: 5 / 4,
   sizes:
     "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 400px",
   focus: blok.image.focus || undefined, // Focal point from Storyblok
