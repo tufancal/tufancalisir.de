@@ -60,6 +60,9 @@ export default defineConfig({
       },
       apiOptions: {
         region: "eu",
+        // Workaround for Storyblok client throttling causing hangs in Cloudflare Workers
+        // See: https://github.com/storyblok/storyblok-js-client/issues/682
+        rateLimit: 250,
       },
       bridge: enableBridge,
     }),
