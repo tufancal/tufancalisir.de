@@ -7,12 +7,12 @@ import { schemaToJson } from "@/src/utils/jsonld";
 import { getStoryblokVersion } from "@/src/utils/env";
 import { ClientRouter } from "astro:transitions";
 
-// Pagefind uses node:path/posix which isn't supported in Cloudflare Workers
-// Conditionally import only in static mode
-let Pagefind: typeof import("@/src/components/atoms/Pagefind.astro").default | null = null;
-if (!import.meta.env.SSR) {
-  Pagefind = (await import("@/src/components/atoms/Pagefind.astro")).default;
-}
+// Pagefind uses node:path/posix which Cloudflare Workers don't support
+// Use build-time constant to completely exclude from SSR builds
+declare const __ENABLE_PAGEFIND__: boolean;
+const Pagefind = __ENABLE_PAGEFIND__
+  ? (await import("@/src/components/atoms/Pagefind.astro")).default
+  : null;
 
 interface Props {
   seoPage: {
@@ -140,7 +140,6 @@ const { seoPage, jsonld, noindex } = Astro.props;
   </head>
   <body class="bg-gallery">
     <StoryblokComponent blok={header} />
-    {/* Pagefind uses node:path/posix which isn't supported in Cloudflare Workers SSR */}
     {Pagefind && <Pagefind />}
     <main>
       <slot />

@@ -66,6 +66,10 @@ export default defineConfig({
   ],
   vite: {
     plugins: [tailwindcss(), ...(enableBridge ? [mkcert()] : [])],
+    define: {
+      // Build-time constant to conditionally exclude Pagefind in SSR builds
+      __ENABLE_PAGEFIND__: JSON.stringify(!enableBridge),
+    },
     resolve: {
       alias: {
         "@": path.resolve("./"),
