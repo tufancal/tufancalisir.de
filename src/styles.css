@@ -37,10 +37,22 @@
   --noise: 1;
 }
 
-/* Fallback fonts (non-subset) */
+/* Subset fonts (performance optimized) */
 @font-face {
   font-family: "Hind";
-  src: url("/fonts/Hind-SemiBold.woff2") format("woff2");
+  src:
+    url("/fonts/subset-Hind-Regular.woff2") format("woff2"),
+    url("/fonts/Hind-Regular.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Hind";
+  src:
+    url("/fonts/subset-Hind-SemiBold.woff2") format("woff2"),
+    url("/fonts/Hind-SemiBold.woff2") format("woff2");
   font-weight: 600;
   font-style: normal;
   font-display: swap;
@@ -48,15 +60,9 @@
 
 @font-face {
   font-family: "Hind";
-  src: url("/fonts/Hind-Regular.woff2") format("woff2");
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Hind";
-  src: url("/fonts/Hind-Bold.woff2") format("woff2");
+  src:
+    url("/fonts/subset-Hind-Bold.woff2") format("woff2"),
+    url("/fonts/Hind-Bold.woff2") format("woff2");
   font-weight: bold;
   font-style: normal;
   font-display: swap;
@@ -64,7 +70,9 @@
 
 @font-face {
   font-family: "Cardo";
-  src: url("/fonts/Cardo-Bold.woff2") format("woff2");
+  src:
+    url("/fonts/subset-Cardo-Bold.woff2") format("woff2"),
+    url("/fonts/Cardo-Bold.woff2") format("woff2");
   font-weight: bold;
   font-style: normal;
   font-display: swap;
@@ -72,48 +80,9 @@
 
 @font-face {
   font-family: "Cardo";
-  src: url("/fonts/Cardo-Italic.woff2") format("woff2");
-  font-weight: normal;
-  font-style: italic;
-  font-display: swap;
-}
-
-/* Subset fonts (performance optimized) - declared last to take precedence */
-@font-face {
-  font-family: "Hind";
-  src: url("/fonts/subset-Hind-SemiBold.woff2") format("woff2");
-  font-weight: 600;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Hind";
-  src: url("/fonts/subset-Hind-Regular.woff2") format("woff2");
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Hind";
-  src: url("/fonts/subset-Hind-Bold.woff2") format("woff2");
-  font-weight: bold;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Cardo";
-  src: url("/fonts/subset-Cardo-Bold.woff2") format("woff2");
-  font-weight: bold;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Cardo";
-  src: url("/fonts/subset-Cardo-Italic.woff2") format("woff2");
+  src:
+    url("/fonts/subset-Cardo-Italic.woff2") format("woff2"),
+    url("/fonts/Cardo-Italic.woff2") format("woff2");
   font-weight: normal;
   font-style: italic;
   font-display: swap;
