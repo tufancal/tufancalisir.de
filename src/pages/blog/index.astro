@@ -5,17 +5,50 @@ import { useStoryblokApi } from "@storyblok/astro";
 import StoryblokComponent from "@storyblok/astro/StoryblokComponent.astro";
 import Breadcrumb from "@/src/components/molecules/Breadcrumb.astro";
 import { getStoryblokVersion } from "@/src/utils/env";
+import { createCollectionPageSchema } from "@/src/utils/jsonld";
 
 const storyblokApi = useStoryblokApi();
+const contentVersion = getStoryblokVersion();
+
 const { data } = await storyblokApi.get("cdn/stories/blog", {
-  version: getStoryblokVersion(),
+  version: contentVersion,
 });
 
 const content = data.story.content;
 const seo = extractSeoData(content);
+
+// Fetch blog posts for CollectionPage schema
+const { data: postsData } = await storyblokApi.get("cdn/stories", {
+  version: contentVersion,
+  starts_with: "blog",
+  content_type: "blogPost",
+});
+
+// Fetch global SEO data
+const { data: seoData } = await storyblokApi.get("cdn/stories/global/seo", {
+  version: contentVersion,
+});
+const globalSeo = seoData.story.content;
+
+const baseUrl = Astro.url.origin;
+const pageUrl = Astro.url.href;
+
+// Create CollectionPage schema for blog listing
+const jsonld = createCollectionPageSchema({
+  name: seo.title,
+  url: pageUrl,
+  description: seo.description,
+  siteName: globalSeo.siteName,
+  siteUrl: baseUrl,
+  baseUrl,
+  items: postsData.stories.map((story: any) => ({
+    name: story.content.headline || story.name,
+    url: `/${story.full_slug}`,
+  })),
+});
 ---
 
-<Layout seoPage={seo}>
+<Layout seoPage={seo} jsonld={jsonld}>
   <Breadcrumb
     items={[
       { name: "Home", url: "/" },
