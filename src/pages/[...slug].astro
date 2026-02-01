@@ -5,6 +5,7 @@ import { useStoryblokApi } from "@storyblok/astro";
 import { extractSeoData } from "@/src/utils/storyblok";
 import Breadcrumb from "@/src/components/molecules/Breadcrumb.astro";
 import { getStoryblokVersion } from "@/src/utils/env";
+import { createWebPageSchema } from "@/src/utils/jsonld";
 
 export async function getStaticPaths() {
   const sbApi = useStoryblokApi();
@@ -26,12 +27,13 @@ export async function getStaticPaths() {
 
 const sbApi = useStoryblokApi();
 const { slug } = Astro.params;
+const contentVersion = getStoryblokVersion();
 
 let content, seo;
 
 try {
-  const { data} = await sbApi.get(`cdn/stories/${slug}`, {
-    version: getStoryblokVersion(),
+  const { data } = await sbApi.get(`cdn/stories/${slug}`, {
+    version: contentVersion,
   });
 
   content = data.story.content;
@@ -40,13 +42,33 @@ try {
   return Astro.redirect("/404");
 }
 
+// Fetch global SEO data
+const { data: seoData } = await sbApi.get("cdn/stories/global/seo", {
+  version: contentVersion,
+});
+const globalSeo = seoData.story.content;
+
+const baseUrl = Astro.url.origin;
+const pageUrl = Astro.url.href;
 const breadcrumbTitle = seo.title.split(" | ")[0];
+const breadcrumbs = [{ name: "Home", url: "/" }, { name: breadcrumbTitle }];
+
+// Create WebPage schema
+const jsonld = createWebPageSchema({
+  name: seo.title,
+  url: pageUrl,
+  description: seo.description,
+  siteName: globalSeo.siteName,
+  siteUrl: baseUrl,
+  breadcrumbs,
+  baseUrl,
+});
 
 const noindexPages = ["datenschutz", "impressum"];
 const shouldNoindex = noindexPages.includes(slug);
 ---
 
-<Layout seoPage={seo} noindex={shouldNoindex}>
-  <Breadcrumb items={[{ name: "Home", url: "/" }, { name: breadcrumbTitle }]} />
+<Layout seoPage={seo} jsonld={jsonld} noindex={shouldNoindex}>
+  <Breadcrumb items={breadcrumbs} />
   <StoryblokComponent blok={content} />
 </Layout>
