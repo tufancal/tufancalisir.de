@@ -3,6 +3,7 @@ import Layout from "../../../layouts/Layout.astro";
 import { useStoryblokApi } from "@storyblok/astro";
 import { getBlogCategories, extractSeoData } from "@/src/utils/storyblok";
 import BlogPostGridCategory from "@/src/components/organisms/BlogPostGridCategory.astro";
+import CategoryTeaser from "@/src/components/organisms/CategoryTeaser.astro";
 import StoryblokComponent from "@storyblok/astro/StoryblokComponent.astro";
 import Breadcrumb from "@/src/components/molecules/Breadcrumb.astro";
 import { getStoryblokVersion } from "@/src/utils/env";
@@ -55,6 +56,9 @@ const currentCategory = categories.get(kategorie);
       content.body.map((blok: any) => {
         if (blok.component === "blogPostGridCategory") {
           return <BlogPostGridCategory categoryValue={kategorie} blok={blok} />;
+        }
+        if (blok.component === "categoryTeaser") {
+          return <CategoryTeaser categoryValue={kategorie} blok={blok} />;
         }
         return <StoryblokComponent blok={blok} />;
       })
