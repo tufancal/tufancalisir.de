@@ -37,7 +37,7 @@ const { kicker, content } = blok;
   )}
 
   {content && (
-    <div class="prose lg:prose-lg prose-headings:text-base-content prose-p:text-base-content prose-a:text-primary hover:prose-a:underline prose-strong:text-base-content max-w-none">
+    <div class="prose lg:prose-lg prose-headings:text-base-content prose-p:text-base-content prose-a:text-primary prose-a:hover:text-primary/80 prose-strong:text-base-content prose-li:text-base-content prose-blockquote:text-base-content prose-blockquote:border-primary prose-code:text-base-content prose-code:bg-base-200 max-w-none">
       <Fragment set:html={renderRichText(content as StoryblokRichTextNode)} />
     </div>
   )}
