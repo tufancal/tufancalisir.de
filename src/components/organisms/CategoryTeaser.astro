@@ -5,17 +5,12 @@ import {
   renderRichText,
   type StoryblokRichTextNode,
 } from "@storyblok/astro";
+import type { CategoryTeaser } from "@/.storyblok/types/285719928053161/storyblok-components";
 import { getBlogCategory } from "@/src/utils/storyblok";
 import { getStoryblokVersion } from "@/src/utils/env";
 
 export interface Props {
-  blok: {
-    heading?: string;
-    description?: StoryblokRichTextNode;
-    component: "categoryTeaser";
-    _uid: string;
-    [k: string]: unknown;
-  };
+  blok: CategoryTeaser;
   categoryValue: string;
 }
 
