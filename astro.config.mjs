@@ -58,6 +58,7 @@ export default defineConfig({
         infoCardList: "components/organisms/InfoCardList",
         richText: "components/organisms/RichText",
         categoryTeaser: "components/organisms/CategoryTeaser",
+        editorialText: "components/organisms/EditorialText",
       },
       apiOptions: {
         region: "eu",
