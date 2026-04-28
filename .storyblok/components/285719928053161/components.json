@@ -4,7 +4,7 @@
     "display_name": null,
     "description": "",
     "created_at": "2025-08-30T11:31:11.850Z",
-    "updated_at": "2025-12-26T11:58:36.455Z",
+    "updated_at": "2025-12-26T12:30:37.341Z",
     "id": 85458419103308,
     "schema": {
       "author": {
@@ -18,6 +18,16 @@
         "translatable": true,
         "datasource_slug": "authors",
         "id": "ANWPl8wYTY2eIhAZPkn9dQ"
+      },
+      "tab-78f9b37e-383b-4797-830d-eafc7b90b2c9": {
+        "display_name": "SEO",
+        "keys": [
+          "title",
+          "description"
+        ],
+        "pos": 0,
+        "type": "tab",
+        "id": "ePmzfjg7R5eDDer8e5CyyQ"
       },
       "category": {
         "type": "options",
@@ -55,12 +65,24 @@
         "pos": 5,
         "id": "SR6lq81-R5G6wMKk8Vc7VQ",
         "required": true,
-        "translatable": true
+        "translatable": true,
+        "allow_target_blank": true,
+        "allow_custom_attributes": true
       },
       "tl_dr": {
         "type": "richtext",
         "pos": 6,
         "id": "0lUkujQORZ65B7r80zHzVg"
+      },
+      "title": {
+        "type": "text",
+        "pos": 8,
+        "id": "3RN4Yvx3TqGHuxSuFHuCFA"
+      },
+      "description": {
+        "type": "text",
+        "pos": 9,
+        "id": "NlS-K-YcSsmLmO3wOst3DQ"
       }
     },
     "image": null,
@@ -298,7 +320,7 @@
     "all_presets": [],
     "preset_id": null,
     "real_name": "careerItem",
-    "component_group_uuid": "85c6085a-2c6d-46b4-b3da-3ce69344ac2a",
+    "component_group_uuid": "86e7422f-7eb3-4e72-9c94-20da38ec0100",
     "color": null,
     "icon": null,
     "internal_tags_list": [],
@@ -356,6 +378,41 @@
     "metadata": {}
   },
   {
+    "name": "categoryTeaser",
+    "display_name": null,
+    "description": "",
+    "created_at": "2026-04-28T19:20:08.512Z",
+    "updated_at": "2026-04-28T19:20:25.874Z",
+    "id": 170862217391259,
+    "schema": {
+      "heading": {
+        "type": "text",
+        "pos": 0,
+        "id": "_8XoOqSmQEqmKZDCr6xSrQ"
+      },
+      "description": {
+        "type": "richtext",
+        "pos": 1,
+        "id": "mYktKIn2QbautSAUybpbBg"
+      }
+    },
+    "image": null,
+    "preview_field": null,
+    "is_root": false,
+    "preview_tmpl": null,
+    "is_nestable": true,
+    "all_presets": [],
+    "preset_id": null,
+    "real_name": "categoryTeaser",
+    "component_group_uuid": "85c6085a-2c6d-46b4-b3da-3ce69344ac2a",
+    "color": null,
+    "icon": null,
+    "internal_tags_list": [],
+    "internal_tag_ids": [],
+    "content_type_asset_preview": null,
+    "metadata": {}
+  },
+  {
     "name": "collapsibleItem",
     "display_name": null,
     "description": "",
@@ -384,7 +441,7 @@
     "all_presets": [],
     "preset_id": null,
     "real_name": "collapsibleItem",
-    "component_group_uuid": "85c6085a-2c6d-46b4-b3da-3ce69344ac2a",
+    "component_group_uuid": "86e7422f-7eb3-4e72-9c94-20da38ec0100",
     "color": null,
     "icon": null,
     "internal_tags_list": [],
@@ -536,6 +593,41 @@
     "metadata": {}
   },
   {
+    "name": "editorialText",
+    "display_name": null,
+    "description": "",
+    "created_at": "2026-04-28T19:20:35.048Z",
+    "updated_at": "2026-04-28T19:20:45.626Z",
+    "id": 170862326078620,
+    "schema": {
+      "kicker": {
+        "type": "text",
+        "pos": 0,
+        "id": "YcS-nZcPSe-g_PCdvcrTEA"
+      },
+      "content": {
+        "type": "richtext",
+        "pos": 1,
+        "id": "HUVxIz2_ShiCt4aeXj_IBA"
+      }
+    },
+    "image": null,
+    "preview_field": null,
+    "is_root": false,
+    "preview_tmpl": null,
+    "is_nestable": true,
+    "all_presets": [],
+    "preset_id": null,
+    "real_name": "editorialText",
+    "component_group_uuid": "85c6085a-2c6d-46b4-b3da-3ce69344ac2a",
+    "color": null,
+    "icon": null,
+    "internal_tags_list": [],
+    "internal_tag_ids": [],
+    "content_type_asset_preview": null,
+    "metadata": {}
+  },
+  {
     "name": "featureItem",
     "display_name": null,
     "description": "",
@@ -569,7 +661,7 @@
     "all_presets": [],
     "preset_id": null,
     "real_name": "featureItem",
-    "component_group_uuid": "85c6085a-2c6d-46b4-b3da-3ce69344ac2a",
+    "component_group_uuid": "86e7422f-7eb3-4e72-9c94-20da38ec0100",
     "color": null,
     "icon": null,
     "internal_tags_list": [],
@@ -860,7 +952,7 @@
     "all_presets": [],
     "preset_id": null,
     "real_name": "infoCard",
-    "component_group_uuid": "85c6085a-2c6d-46b4-b3da-3ce69344ac2a",
+    "component_group_uuid": "86e7422f-7eb3-4e72-9c94-20da38ec0100",
     "color": null,
     "icon": null,
     "internal_tags_list": [],
@@ -1063,7 +1155,7 @@
     "all_presets": [],
     "preset_id": null,
     "real_name": "link",
-    "component_group_uuid": "85c6085a-2c6d-46b4-b3da-3ce69344ac2a",
+    "component_group_uuid": "86e7422f-7eb3-4e72-9c94-20da38ec0100",
     "color": null,
     "icon": null,
     "internal_tags_list": [],
@@ -1107,7 +1199,7 @@
     "all_presets": [],
     "preset_id": null,
     "real_name": "navLink",
-    "component_group_uuid": "85c6085a-2c6d-46b4-b3da-3ce69344ac2a",
+    "component_group_uuid": "86e7422f-7eb3-4e72-9c94-20da38ec0100",
     "color": null,
     "icon": null,
     "internal_tags_list": [],
@@ -1238,7 +1330,7 @@
     "all_presets": [],
     "preset_id": null,
     "real_name": "pricingCard",
-    "component_group_uuid": "85c6085a-2c6d-46b4-b3da-3ce69344ac2a",
+    "component_group_uuid": "86e7422f-7eb3-4e72-9c94-20da38ec0100",
     "color": null,
     "icon": null,
     "internal_tags_list": [],
@@ -1604,7 +1696,7 @@
     "all_presets": [],
     "preset_id": null,
     "real_name": "techStackItem",
-    "component_group_uuid": "85c6085a-2c6d-46b4-b3da-3ce69344ac2a",
+    "component_group_uuid": "86e7422f-7eb3-4e72-9c94-20da38ec0100",
     "color": null,
     "icon": null,
     "internal_tags_list": [],

@@ -19,5 +19,12 @@
     "uuid": "3fca1665-e66e-428c-9474-64b33f5f503a",
     "parent_id": null,
     "parent_uuid": null
+  },
+  {
+    "name": "Subcomponents",
+    "id": 170838214052952,
+    "uuid": "86e7422f-7eb3-4e72-9c94-20da38ec0100",
+    "parent_id": 67927205490997,
+    "parent_uuid": "85c6085a-2c6d-46b4-b3da-3ce69344ac2a"
   }
 ]

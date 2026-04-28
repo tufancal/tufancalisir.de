@@ -9,6 +9,8 @@ export interface BlogPost {
   introText: StoryblokRichtext;
   copy: StoryblokRichtext;
   tl_dr?: StoryblokRichtext;
+  title?: string;
+  description?: string;
   component: "blogPost";
   _uid: string;
   [k: string]: unknown;
@@ -31,9 +33,11 @@ export interface BlogPostGlobals {
     | BlogPostList
     | CareerItem
     | CareerTimeline
+    | CategoryTeaser
     | CollapsibleItem
     | CollapsibleItemList
     | ContactForm
+    | EditorialText
     | FeatureItem
     | FeatureList
     | Footer
@@ -105,6 +109,14 @@ export interface CareerTimeline {
   [k: string]: unknown;
 }
 
+export interface CategoryTeaser {
+  heading?: string;
+  description?: StoryblokRichtext;
+  component: "categoryTeaser";
+  _uid: string;
+  [k: string]: unknown;
+}
+
 export interface CollapsibleItem {
   title?: string;
   description?: StoryblokRichtext;
@@ -130,6 +142,14 @@ export interface ContactForm {
   background?: "" | "base-100" | "base-200" | "base-300";
   max_width?: "" | "2xl" | "3xl" | "4xl";
   component: "contactForm";
+  _uid: string;
+  [k: string]: unknown;
+}
+
+export interface EditorialText {
+  kicker?: string;
+  content?: StoryblokRichtext;
+  component: "editorialText";
   _uid: string;
   [k: string]: unknown;
 }
@@ -243,9 +263,11 @@ export interface Page {
     | BlogPostList
     | CareerItem
     | CareerTimeline
+    | CategoryTeaser
     | CollapsibleItem
     | CollapsibleItemList
     | ContactForm
+    | EditorialText
     | FeatureItem
     | FeatureList
     | Footer
