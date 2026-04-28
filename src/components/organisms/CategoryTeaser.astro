@@ -1,0 +1,52 @@
+---
+import {
+  storyblokEditable,
+  type SbBlokData,
+  renderRichText,
+  type StoryblokRichTextNode,
+} from "@storyblok/astro";
+import { getBlogCategory } from "@/src/utils/storyblok";
+import { getStoryblokVersion } from "@/src/utils/env";
+
+export interface Props {
+  blok: {
+    heading?: string;
+    description?: StoryblokRichTextNode;
+    component: "categoryTeaser";
+    _uid: string;
+    [k: string]: unknown;
+  };
+  categoryValue: string;
+}
+
+const { blok, categoryValue } = Astro.props;
+const { heading, description } = blok;
+
+const category = await getBlogCategory(categoryValue, getStoryblokVersion());
+---
+
+<section
+  class="container mx-auto max-w-3xl px-4 py-12 sm:py-20"
+  {...storyblokEditable(blok as SbBlokData)}
+>
+  {category && (
+    <div class="mb-6">
+      <span class={`badge badge-${category.color} gap-1 text-sm`}>
+        {category.icon && <span aria-hidden="true">{category.icon}</span>}
+        {category.name}
+      </span>
+    </div>
+  )}
+
+  {heading && (
+    <h1 class="font-secondary mb-6 text-4xl font-bold sm:text-5xl lg:text-6xl">
+      {heading}
+    </h1>
+  )}
+
+  {description && (
+    <div class="prose prose-lg text-base-content/70 max-w-none">
+      <Fragment set:html={renderRichText(description as StoryblokRichTextNode)} />
+    </div>
+  )}
+</section>
