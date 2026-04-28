@@ -5,15 +5,10 @@ import {
   renderRichText,
   type StoryblokRichTextNode,
 } from "@storyblok/astro";
+import type { EditorialText } from "@/.storyblok/types/285719928053161/storyblok-components";
 
 export interface Props {
-  blok: {
-    kicker?: string;
-    content?: StoryblokRichTextNode;
-    component: "editorialText";
-    _uid: string;
-    [k: string]: unknown;
-  };
+  blok: EditorialText;
 }
 
 const { blok } = Astro.props;
