@@ -1,0 +1,44 @@
+---
+import {
+  storyblokEditable,
+  type SbBlokData,
+  renderRichText,
+  type StoryblokRichTextNode,
+} from "@storyblok/astro";
+
+export interface Props {
+  blok: {
+    kicker?: string;
+    content?: StoryblokRichTextNode;
+    component: "editorialText";
+    _uid: string;
+    [k: string]: unknown;
+  };
+}
+
+const { blok } = Astro.props;
+const { kicker, content } = blok;
+---
+
+<section
+  class="container mx-auto max-w-2xl px-4 py-10"
+  aria-labelledby={kicker ? `${blok._uid}-kicker` : undefined}
+  {...storyblokEditable(blok as SbBlokData)}
+>
+  <div class="border-primary mb-8 border-t-2"></div>
+
+  {kicker && (
+    <p
+      id={`${blok._uid}-kicker`}
+      class="text-primary mb-3 text-xs font-semibold uppercase tracking-widest"
+    >
+      {kicker}
+    </p>
+  )}
+
+  {content && (
+    <div class="prose lg:prose-lg prose-headings:text-base-content prose-p:text-base-content prose-a:text-primary hover:prose-a:underline prose-strong:text-base-content max-w-none">
+      <Fragment set:html={renderRichText(content as StoryblokRichTextNode)} />
+    </div>
+  )}
+</section>
