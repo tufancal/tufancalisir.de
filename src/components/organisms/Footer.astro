@@ -3,7 +3,7 @@ import { storyblokEditable, type SbBlokData } from "@storyblok/astro";
 import { getStoryblokVersion } from "@/src/utils/env";
 import StoryblokComponent from "@storyblok/astro/StoryblokComponent.astro";
 import { useStoryblokApi } from "@storyblok/astro";
-import { resolveStoryblokUrl } from "@/src/utils/storyblok";
+import { getBlogCategories, resolveStoryblokUrl } from "@/src/utils/storyblok";
 import Link from "@/src/components/atoms/Link.astro";
 import type { Footer } from "@/.storyblok/types/285719928053161/storyblok-components";
 
@@ -28,9 +28,23 @@ const socialMedia = socialMediaData.data.story.content;
 const socialMediaLinks = socialMedia.body[0].links;
 
 const header = headerData.data.story.content;
-// Combine navLinks and ctaButton into a single array
-const sitemapLinks =
-  header.body[0].navLinks.concat(header.body[0].ctaButton) || [];
+const blogCategories = await getBlogCategories(getStoryblokVersion());
+const blogCategoryLinks = Array.from(blogCategories.values()).map(
+  (category) => ({
+    text: category.name,
+    url: {
+      linktype: "story",
+      cached_url: `blog/kategorie/${category.value}`,
+      url: `blog/kategorie/${category.value}`,
+    },
+  }),
+);
+
+// Combine primary navigation, CTA links, and blog category links
+const sitemapLinks = [
+  ...(header.body?.[0]?.navLinks ?? []),
+  ...(header.body?.[0]?.ctaButton ?? []),
+];
 ---
 
 <footer
@@ -42,6 +56,19 @@ const sitemapLinks =
       <h2 class="footer-title">Sitemap</h2>
       {
         sitemapLinks.map((link: any) => (
+          <a
+            href={resolveStoryblokUrl(link.url)}
+            class="link link-hover lg:text-base"
+          >
+            {link.text}
+          </a>
+        ))
+      }
+    </nav>
+    <nav>
+      <h2 class="footer-title">Blog Kategorien</h2>
+      {
+        blogCategoryLinks.map((link: any) => (
           <a
             href={resolveStoryblokUrl(link.url)}
             class="link link-hover lg:text-base"
